@@ -4,6 +4,9 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Model from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Aux from '../../hoc/Aux/Aux';
+import withErrorHandler from '../../hoc/WithErrorHandler/withErrorHandler'
+import Spinner from '../../components/UI/Spinner/Spinner';
+import axios from '../../axios-order';
 
 const INGREDIENTS_PRICE = {
     salad: 0.5,
@@ -14,15 +17,22 @@ const INGREDIENTS_PRICE = {
 
 class BurgerBuilder extends Component {
     state = {
-        ingredients: {
-            salad: 0,
-            bacon: 0,
-            cheese: 0,
-            meat: 0,
-        },
+        ingredients: null,
         total: 4,
         purchasable: false,
         purchasing: false,
+        isSubmitting: false,
+        error: null
+    }
+
+    componentDidMount() {
+        axios.get('/ingredients.json')
+            .then(response => {
+                this.setState({ingredients: response.data});
+            })
+            .catch(error => {
+                this.setState({error: error});
+            })
     }
 
     updatePurchaseState(updatedIngrients) {
@@ -74,37 +84,62 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {
-        alert('You continue!');
+        this.props.history.push({
+            pathname: '/checkout',
+            state: { 
+                ingredients: this.state.ingredients,
+                total: this.state.total
+             }
+        });
     }
 
     render() {
         const disabledInfo = {
             ...this.state.ingredients
         }
-        for (let key in disabledInfo){
-            disabledInfo[key] = (disabledInfo[key] <= 0);
+
+        let burger = <Spinner />;
+        if (this.state.error){
+            burger = <p>There is some error to trieve ingredient!</p>
         }
-        return (
-            <Aux>
-                <Model show={this.state.purchasing} close={() => this.purchasingHandler(false)}>
-                    <OrderSummary 
+        let orderSummary = <Spinner />;
+
+        if(this.state.ingredients) {
+            for (let key in disabledInfo){
+                disabledInfo[key] = (disabledInfo[key] <= 0);
+            }
+    
+            if (!this.state.isSubmitting) orderSummary = ( 
+                <OrderSummary 
                     ingredients={this.state.ingredients} 
                     total={this.state.total}
                     purchasingContinued={this.purchaseContinueHandler}
                     purchasingCanceled={() => this.purchasingHandler(false)}
-                />
+                />);
+
+            burger = (
+                <Aux>
+                    <Burger burgerIngredients={this.state.ingredients} />
+                    <BuildControls 
+                        ingredientAdded={this.addIngredientHandler}
+                        ingredientRemoved={this.removeIngredientHandler} 
+                        disabledInfo={disabledInfo} 
+                        purchasable={this.state.purchasable}
+                        purchasing={() => this.purchasingHandler(true)}
+                        price={this.state.total}/>
+                </Aux>
+            );
+        }
+
+        return (
+            <Aux>
+                <Model show={this.state.purchasing} close={() => this.purchasingHandler(false)}>
+                    {orderSummary}
                 </Model>
-                <Burger burgerIngredients={this.state.ingredients} />
-                <BuildControls 
-                    ingredientAdded={this.addIngredientHandler}
-                    ingredientRemoved={this.removeIngredientHandler} 
-                    disabledInfo={disabledInfo} 
-                    purchasable={this.state.purchasable}
-                    purchasing={() => this.purchasingHandler(true)}
-                    price={this.state.total}/>
+                {burger}
             </Aux>
         );
     }
 }
 
-export default BurgerBuilder
+export default withErrorHandler(BurgerBuilder, axios);
