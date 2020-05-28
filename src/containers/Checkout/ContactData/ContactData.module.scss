@@ -6,21 +6,10 @@
     @media (min-width: 600px) {
         width: 500px;
     }
+    
     .ContactForm{
         display:flex;
         flex-direction: column;
-    }
-    input { 
-        padding: .6rem .7rem;
-        font-size: 0.875rem;
-        margin-bottom: 0.4em;
-        border-radius: 0.5em;
-        border: 1px solid lightgrey;
-
-        &:focus{
-            outline: none;
-            border: 1px solid darkblue;
-        }
     }
 }
 
