@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import { connect } from 'react-redux';
+
 import CheckoutSummary from '../../components/Order/CheckoutSummary/CheckoutSummary';
 import ContactDate from './ContactData/ContactData';
 import { Route } from 'react-router-dom';
@@ -6,8 +8,6 @@ import { Route } from 'react-router-dom';
 
 class Checkout extends Component {
     state = {
-        ingredients: null,
-        total: 0,
         isSubmitting: false
     }
     checkoutCancelledHandler = () => {
@@ -21,25 +21,26 @@ class Checkout extends Component {
         });
     }
 
-    componentDidMount = () => {
-        this.setState({
-            ...this.props.location.state
-        })
-    }
-
     render() {
-        const ingredients = (this.props.location.state)?this.props.location.state.ingredients:this.state.ingredients;
+        const ingredients = this.props.ingredients;
         const checkout = <>
                         <CheckoutSummary 
                             ingredients={ingredients}
                             checkoutCancelled={this.checkoutCancelledHandler}
                             checkoutContinued={this.checkoutContinuedHandler} />
                         <Route path={this.props.match.url+'/contact-data'}
-                            render={(props) => <ContactDate ingredients={this.state.ingredients} total={this.state.total} {...props}/>} />
+                            component={ContactDate} />
                         </>
         
         return (checkout)
     }
 }
 
-export default Checkout;
+const mapStateToProps = state => {
+    return {
+        ingredients: state.ingredients,
+        total: state.total
+    }
+}
+
+export default connect(mapStateToProps)(Checkout);

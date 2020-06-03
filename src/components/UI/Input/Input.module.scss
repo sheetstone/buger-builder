@@ -23,5 +23,15 @@
 
 .InputElement:focus {
     outline: none;
-    background-color: #ccc;
+    border: 1px solid blue;
+}
+
+.inValid {
+    color: red;
+    border: 1px solid red;
+    background: transparentize(pink, 0.5);
+
+    &:focus{
+        border: 1px solid red;
+    }
 }

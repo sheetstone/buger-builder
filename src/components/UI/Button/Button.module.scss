@@ -17,8 +17,15 @@
 
 .Success {
     color: #5C9210;
+    &:disabled{
+        color: mix(#5C9210, #ddd)
+    }
 }
 
 .Danger {
     color: #944317;
+    &:disabled{
+        color: mix(#944317, #ddd);
+    }
 }
+

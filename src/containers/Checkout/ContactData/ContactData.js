@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import axios from '../../../axios-order';
+
 import Button from '../../../components/UI/Button/Button';
 import Input from '../../../components/UI/Input/Input';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import classes from './ContactData.module.scss';
-
-import axios from '../../../axios-order';
-
 
 class ContactData extends Component {
     state = {
@@ -16,7 +16,12 @@ class ContactData extends Component {
                     type: 'text',
                     placeholder: 'Your Name'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    required: true,
+                    pattern: /^[a-z ,.'-]+$/i
+                },
+                valid: false
             },
             street: {
                 elementType: 'input',
@@ -24,7 +29,11 @@ class ContactData extends Component {
                     type: 'text',
                     placeholder: 'Street'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    required: true
+                },
+                valid: false
             },
             zipCode: {
                 elementType: 'input',
@@ -32,7 +41,14 @@ class ContactData extends Component {
                     type: 'text',
                     placeholder: 'Your zipCode'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    required: true,
+                    minLength: 5,
+                    maxLength: 5,
+                    pattern: /^[0-9]{5}(?:-[0-9]{4})?$/i
+                },
+                valid: false
             },
             country: {
                 elementType: 'input',
@@ -40,7 +56,11 @@ class ContactData extends Component {
                     type: 'text',
                     placeholder: 'Country'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    required: true
+                },
+                valid: false
             },
             email: {
                 elementType: 'input',
@@ -48,7 +68,11 @@ class ContactData extends Component {
                     type: 'email',
                     placeholder: 'Your Email'
                 },
-                value: ''
+                value: '',
+                validation: {
+                    required: true
+                },
+                valid: false
             },
             deliveryMethod: {
                 elementType: 'select',
@@ -63,13 +87,35 @@ class ContactData extends Component {
                         value: 'slow',
                         displayValue: 'Slow (free)'
                     }]
-                }
+                },
+                valid: true,
+                value: ''
             }
         },
-        ingredients: null,
-        isSubmitting: false
+        formIsValid: false
     }
 
+    checkValidation(value, rules) {
+        let isValid = false;
+
+        if (rules.required) {
+            isValid = value.trim() !== '';
+        }
+
+        if (rules.minLength) {
+            isValid = value.length >= rules.minLength && isValid;
+        }
+
+        if (rules.maxLength) {
+            isValid = value.length <= rules.maxLength && isValid;
+        }
+
+        if (rules.pattern) {
+            isValid = rules.pattern.test(value) && isValid;
+        }
+
+        return isValid;
+    }
 
     submitHandler = (e) => {
         e.preventDefault();
@@ -78,15 +124,15 @@ class ContactData extends Component {
             ingredients: this.props.ingredients,
             price: this.props.total,
             customer: {
-                name: 'Hong Zhang',
+                name: this.state.orderForm.name.value,
                 address: {
-                    street: 'teststreet1',
-                    zipCode: '41351',
-                    country: 'US'
+                    street: this.state.orderForm.street.value,
+                    zipCode: this.state.orderForm.zipCode.value,
+                    country: this.state.orderForm.country.value
                 },
-                email: 'test@test.com'
+                email: this.state.orderForm.email.value
             },
-            deliveryMethod: 'fastest'
+            deliveryMethod: this.state.orderForm.deliveryMethod.value
         }
         axios.post('/orders.json', order)
             .then(response => {
@@ -109,9 +155,23 @@ class ContactData extends Component {
     }
 
     valueChangeHandler = (e, key) => {
-        console.log(e.target);
-        console.log(key);
-        this.state.orderForm[key].value=e.target.value;
+        const orderForm = {...this.state.orderForm};
+        const orderFormEle = {...orderForm[key]};
+        orderFormEle.value = e.target.value;
+        orderFormEle.valid = orderFormEle.validation?this.checkValidation(e.target.value, orderFormEle.validation):true;
+        orderFormEle.touched = true;
+        orderForm[key] = orderFormEle;
+        // console.log(orderFormEle);
+
+        let formIsValid = true;
+        for (let [, item] of Object.entries(this.state.orderForm)) {
+            formIsValid = (formIsValid && !!item.valid);
+        }   
+        this.setState(
+            {
+                orderForm: orderForm,
+                formIsValid: formIsValid
+            });
     }
 
     render() {
@@ -124,7 +184,7 @@ class ContactData extends Component {
             form = (
                 <form className={classes.ContactForm}>
                     {formElementArray}
-                    <Button btnType='Success' clicked={this.submitHandler}>ORDER</Button>
+                    <Button btnType='Success' clicked={this.submitHandler} disabled={!this.state.formIsValid}>ORDER</Button>
                 </form>
             );
         }
@@ -137,4 +197,11 @@ class ContactData extends Component {
     }
 }
 
-export default ContactData
+const mapStateToProps = state => {
+    return {
+        ingredients: state.ingredients,
+        total: state.total
+    }
+}
+
+export default connect(mapStateToProps)(ContactData);
