@@ -6,6 +6,8 @@ import Button from '../../../components/UI/Button/Button';
 import Input from '../../../components/UI/Input/Input';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import classes from './ContactData.module.scss';
+import WithErrorHandler from '../../../hoc/WithErrorHandler/withErrorHandler';
+import * as actionCreator from '../../../store/actions/index';
 
 class ContactData extends Component {
     state = {
@@ -89,7 +91,7 @@ class ContactData extends Component {
                     }]
                 },
                 valid: true,
-                value: ''
+                value: 'fastest'
             }
         },
         formIsValid: false
@@ -134,24 +136,7 @@ class ContactData extends Component {
             },
             deliveryMethod: this.state.orderForm.deliveryMethod.value
         }
-        axios.post('/orders.json', order)
-            .then(response => {
-                this.setState({
-                    isSubmitting: false,
-                    purchasing: false
-                });
-                console.info("Submit successful");
-                console.info("Redirecting...");
-                this.props.history.push('/');
-
-            })
-            .catch(error => {
-                this.setState({
-                    isSubmitting: false,
-                    purchasing: false
-                });
-                console.log(error)
-            })
+        this.props.onOrderBurger(order);
     }
 
     valueChangeHandler = (e, key) => {
@@ -180,7 +165,7 @@ class ContactData extends Component {
         for (let [key, item] of Object.entries(this.state.orderForm)){
             formElementArray.push(<Input name={key} {...item} key={key} changed={(e)=>this.valueChangeHandler(e, key)}/>)
         }
-        if (!this.state.isSubmitting) {
+        if (!this.props.loading) {
             form = (
                 <form className={classes.ContactForm}>
                     {formElementArray}
@@ -199,9 +184,17 @@ class ContactData extends Component {
 
 const mapStateToProps = state => {
     return {
-        ingredients: state.ingredients,
-        total: state.total
+        ingredients: state.burger.ingredients,
+        total: state.burger.total,
+        loading: state.order.loading
     }
 }
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = dispatch => {
+    return {
+        onOrderBurger : (orderDate) => dispatch(actionCreator.purchaseBurger(orderDate))
+    }
+    
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(WithErrorHandler(ContactData, axios));

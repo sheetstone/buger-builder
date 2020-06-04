@@ -4,12 +4,18 @@ import './index.css'
 import App from './App'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import reducer from './store/reducer';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
+import thunk from 'redux-thunk';
+import bugerReducer from './store/reducers/burger';
+import orderReducer from './store/reducers/order';
 
 import * as serviceWorker from './serviceWorker'
 
-const store = createStore(reducer);
+const combinedReducer = combineReducers({
+  burger: bugerReducer,
+  order: orderReducer
+})
+const store = createStore(combinedReducer, applyMiddleware(thunk));
 
 ReactDOM.render(
   <React.StrictMode>
