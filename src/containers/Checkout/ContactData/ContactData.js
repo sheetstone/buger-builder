@@ -136,7 +136,7 @@ class ContactData extends Component {
             },
             deliveryMethod: this.state.orderForm.deliveryMethod.value
         }
-        this.props.onOrderBurger(order);
+        this.props.onOrderBurger(order, this.props.token);
     }
 
     valueChangeHandler = (e, key) => {
@@ -186,13 +186,14 @@ const mapStateToProps = state => {
     return {
         ingredients: state.burger.ingredients,
         total: state.burger.total,
-        loading: state.order.loading
+        loading: state.order.loading,
+        token: state.auth.token
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onOrderBurger : (orderDate) => dispatch(actionCreator.purchaseBurger(orderDate))
+        onOrderBurger : (orderDate, token) => dispatch(actionCreator.purchaseBurger(orderDate, token))
     }
     
 }

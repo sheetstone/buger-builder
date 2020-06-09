@@ -8,12 +8,14 @@ import { createStore, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
 import bugerReducer from './store/reducers/burger';
 import orderReducer from './store/reducers/order';
+import authReducer from './store/reducers/auth';
 
 import * as serviceWorker from './serviceWorker'
 
 const combinedReducer = combineReducers({
   burger: bugerReducer,
-  order: orderReducer
+  order: orderReducer,
+  auth: authReducer,
 })
 const store = createStore(combinedReducer, applyMiddleware(thunk));
 

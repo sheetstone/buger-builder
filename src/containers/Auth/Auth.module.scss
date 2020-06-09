@@ -1,0 +1,18 @@
+.Auth {
+    margin: 20px auto;
+    width: 80%;
+    text-align: center;
+    box-shadow: 2px 2px 5px grey;
+
+    @media (min-width: 600px) {
+        width: 500px;
+    }
+    
+    .AuthForm{
+        display:flex;
+        flex-direction: column;
+    }
+}
+.HasError{
+    color: red;
+}
