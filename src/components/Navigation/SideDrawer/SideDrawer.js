@@ -26,7 +26,6 @@ const sideDrawer = (props) => {
                     <Hamburger open={true} clicked={props.showed} />
                 </div>
             </div>
-            
         </Aux>
     )
 }
