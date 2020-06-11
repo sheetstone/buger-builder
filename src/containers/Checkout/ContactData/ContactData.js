@@ -8,6 +8,7 @@ import Spinner from '../../../components/UI/Spinner/Spinner';
 import classes from './ContactData.module.scss';
 import WithErrorHandler from '../../../hoc/WithErrorHandler/withErrorHandler';
 import * as actionCreator from '../../../store/actions/index';
+import { checkValidation } from '../../../share/checkValidation';
 
 class ContactData extends Component {
     state = {
@@ -97,28 +98,6 @@ class ContactData extends Component {
         formIsValid: false
     }
 
-    checkValidation(value, rules) {
-        let isValid = false;
-
-        if (rules.required) {
-            isValid = value.trim() !== '';
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        if (rules.pattern) {
-            isValid = rules.pattern.test(value) && isValid;
-        }
-
-        return isValid;
-    }
-
     submitHandler = (e) => {
         e.preventDefault();
         this.setState({ isSubmitting: true })
@@ -132,9 +111,10 @@ class ContactData extends Component {
                     zipCode: this.state.orderForm.zipCode.value,
                     country: this.state.orderForm.country.value
                 },
-                email: this.state.orderForm.email.value
+                email: this.state.orderForm.email.value,
+                deliveryMethod: this.state.orderForm.deliveryMethod.value,
             },
-            deliveryMethod: this.state.orderForm.deliveryMethod.value
+            userId: this.props.userId
         }
         this.props.onOrderBurger(order, this.props.token);
     }
@@ -143,10 +123,9 @@ class ContactData extends Component {
         const orderForm = {...this.state.orderForm};
         const orderFormEle = {...orderForm[key]};
         orderFormEle.value = e.target.value;
-        orderFormEle.valid = orderFormEle.validation?this.checkValidation(e.target.value, orderFormEle.validation):true;
+        orderFormEle.valid = orderFormEle.validation?checkValidation(e.target.value, orderFormEle.validation):true;
         orderFormEle.touched = true;
         orderForm[key] = orderFormEle;
-        // console.log(orderFormEle);
 
         let formIsValid = true;
         for (let [, item] of Object.entries(this.state.orderForm)) {
@@ -187,7 +166,8 @@ const mapStateToProps = state => {
         ingredients: state.burger.ingredients,
         total: state.burger.total,
         loading: state.order.loading,
-        token: state.auth.token
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 }
 

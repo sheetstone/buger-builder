@@ -60,10 +60,9 @@ export const fetchOrderFail= (obj) => {
     }
 }
 
-export const fetchOrders = (token) => {
+export const fetchOrders = (token, userId) => {
     return dispatch => {
-        console.log(token)
-        axios.get('/orders.json?auth='+token)
+        axios.get('/orders.json?auth='+token+'&orderBy="userId"&equalTo="'+userId+'"')
         .then(response => {
             dispatch(fetchOrderSuccess({orders: response.data}))
         })

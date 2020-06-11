@@ -4,7 +4,7 @@ import './index.css'
 import App from './App'
 import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, combineReducers } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk';
 import bugerReducer from './store/reducers/burger';
 import orderReducer from './store/reducers/order';
@@ -16,8 +16,10 @@ const combinedReducer = combineReducers({
   burger: bugerReducer,
   order: orderReducer,
   auth: authReducer,
-})
-const store = createStore(combinedReducer, applyMiddleware(thunk));
+});
+
+const composeEnhancers = (process.env.NODE_ENV === 'development')?window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__:null || compose;
+const store = createStore(combinedReducer, composeEnhancers(applyMiddleware(thunk)));
 
 ReactDOM.render(
   <React.StrictMode>

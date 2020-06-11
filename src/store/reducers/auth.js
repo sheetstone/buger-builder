@@ -5,6 +5,7 @@ const initialState = {
     userId: null,
     error: null,
     loading: false,
+    authRedirectPath: '/'
 }
 
 const reducer = (state = initialState, action) => {
@@ -16,8 +17,6 @@ const reducer = (state = initialState, action) => {
                 loading: true,
             }
         case actionTypes.AUTH_SUCCESS:
-            console.log("Log in successful");
-            console.log(action);
             return {
                 ...state,
                 token: action.idToken,
@@ -26,18 +25,21 @@ const reducer = (state = initialState, action) => {
                 loading: false
             }
         case actionTypes.AUTH_FAIL:
-            console.log("Log in failed");
             return {
                 ...state,
                 error: action,
                 loading: false
             }
         case actionTypes.AUTH_LOGOUT:
-            console.log("User logged out");
             return {
                 ...state,
                 token: null,
                 userId: null
+            }
+        case actionTypes.SET_AUTH_REDIRECT_PATH:
+            return {
+                ...state,
+                authRedirectPath: action.path
             }
         default:
             return state
