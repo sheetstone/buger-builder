@@ -20,9 +20,9 @@ describe('auth reducer', ()=>{
             loading: false,
             authRedirectPath: '/'
         },{
-            typer: actionTypes.AUTH_SUCCESS,
+            type: actionTypes.AUTH_SUCCESS,
             idToken: 'some-token',
-            userId: 'some-user-id',
+            localId: 'some-user-id',
         })).toEqual({
             token: 'some-token',
             userId: 'some-user-id',
