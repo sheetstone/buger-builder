@@ -67,7 +67,7 @@ class Auth extends Component {
         }
 
         if (rules.isEmail) {
-            const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+            const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/ // eslint-disable-line no-useless-escape
             isValid = pattern.test(value) && isValid;
         }
 
