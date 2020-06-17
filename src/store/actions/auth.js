@@ -22,17 +22,19 @@ export const authFail = (obj) => {
 }
 
 export const checkAuthTimeout = (expirationTime) => {
-    return dispatch => {
-        setTimeout(() => {
-            dispatch(logout());
-        }, expirationTime)
+    return {
+        type: actionTypes.AUTH_CHECKTIMEOUT,
+        expirationTime: expirationTime
     }
 }
 
 export const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('expirationTime');
-    localStorage.removeItem('userId');
+    return {
+        type: actionTypes.AUTH_INITIATE_LOGOUT
+    }
+}
+
+export const logoutSucceed = () => {
     return {
         type: actionTypes.AUTH_LOGOUT
     }

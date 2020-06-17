@@ -6,11 +6,14 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import thunk from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga';
+
 import bugerReducer from './store/reducers/burger';
 import orderReducer from './store/reducers/order';
 import authReducer from './store/reducers/auth';
 
-import * as serviceWorker from './serviceWorker'
+import * as serviceWorker from './serviceWorker';
+import {watchAuth} from './store/sagas/';
 
 const combinedReducer = combineReducers({
   burger: bugerReducer,
@@ -18,8 +21,12 @@ const combinedReducer = combineReducers({
   auth: authReducer,
 });
 
+const SagaMiddleware = createSagaMiddleware();
+
 const composeEnhancers = ((process.env.NODE_ENV === 'development')?window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__:null) || compose;
-const store = createStore(combinedReducer, composeEnhancers(applyMiddleware(thunk)));
+const store = createStore(combinedReducer, composeEnhancers(applyMiddleware(thunk, SagaMiddleware)));
+
+SagaMiddleware.run(watchAuth)
 
 ReactDOM.render(
   <React.StrictMode>
