@@ -23,7 +23,7 @@ const asyncAuth = asyncComponent(() => {
   return import('./containers/Auth/Auth');
 })
 
-const app = (props) => {
+const App = (props) => {
   useEffect(() => {
     props.onTryAutoSignIn();
   }, [props]);
@@ -71,4 +71,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(app);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
