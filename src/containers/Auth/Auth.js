@@ -162,7 +162,7 @@ class Auth extends Component {
         }
 
         if(this.props.errorServer){
-            errorMessage.push(<p className={classes.HasError}>{this.props.errorServer.message}</p>);
+            errorMessage.push(<p className={classes.HasError} key={this.props.errorServer.message+Math.random()}>{this.props.errorServer.message}</p>);
         }
 
         let authRedirect = null;
