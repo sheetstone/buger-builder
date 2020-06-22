@@ -12,5 +12,4 @@ export function* initIngredientsSaga(action) {
   } catch (error) {
     yield put(actions.fetchIngredientFailed({error: error}));
   }
-
 }
