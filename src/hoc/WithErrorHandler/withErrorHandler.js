@@ -11,12 +11,10 @@ const withErrorHandler = (WrappedComponent, axios, message) => {
             setError(null);
             return req;
         }, err => {
-            console.log(message, err)
             setError(err);
         });
 
         const resInterceptor = axios.interceptors.response.use(res => res, err => {
-            console.log(message, err)
             setError(err);
         });
 
@@ -30,8 +28,6 @@ const withErrorHandler = (WrappedComponent, axios, message) => {
         const errorConfirmedHandler = () => {
             setError(null);
         }
-
-        console.log(message, error);
 
         return (
             <Aux>
