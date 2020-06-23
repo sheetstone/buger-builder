@@ -45,7 +45,7 @@ const reducer = (state = initalState, action) => {
         case actionType.FETCH_INGREDIENT_FAILED:
             return {
                 ...state,
-                error: true
+                error: action.error
             }
         case actionType.UPDATA_TOTAL:
             const ingredients = {...state.ingredients};

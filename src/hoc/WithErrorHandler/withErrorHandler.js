@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Modal from '../../components/UI/Modal/Modal';
 import Aux from '../Aux/Aux';
 
-const withErrorHandler = (WrappedComponent, axios, message) => {
+const withErrorHandler = (WrappedComponent, axios) => {
     return props => {
         const [error, setError] = useState(null);
 

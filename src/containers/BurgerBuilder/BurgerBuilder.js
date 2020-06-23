@@ -6,10 +6,10 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Model from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Aux from '../../hoc/Aux/Aux';
-import withErrorHandler from '../../hoc/WithErrorHandler/withErrorHandler'
+import WithErrorModal from '../../hoc/WithErrorHandler/withErrorModal'
 import Spinner from '../../components/UI/Spinner/Spinner';
 import * as actionCreator from '../../store/actions';
-import axios from '../../axios-order';
+
 
 export class BurgerBuilder extends Component {
     state = {
@@ -49,7 +49,7 @@ export class BurgerBuilder extends Component {
 
         let burger = <Spinner />;
         if (this.props.error){
-            burger = <p>There is some error to trieve ingredient!</p>
+            burger = <p>There is some error to retrieve ingredient!</p>
         }
         let orderSummary = <Spinner />;
 
@@ -86,7 +86,9 @@ export class BurgerBuilder extends Component {
                 <Model show={this.state.purchasing} close={() => this.purchasingHandler(false)}>
                     {orderSummary}
                 </Model>
-                {burger}
+                <WithErrorModal error={this.props.error}>
+                    {burger}
+                </WithErrorModal>
             </Aux>
         );
     }
@@ -113,4 +115,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));
+export default connect(mapStateToProps, mapDispatchToProps)(BurgerBuilder);

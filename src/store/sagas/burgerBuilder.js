@@ -9,6 +9,7 @@ export function* initIngredientsSaga(action) {
       '/ingredients.json'
     );
     yield put(actions.setIngredients({ingredients: response.data}));
+
   } catch (error) {
     yield put(actions.fetchIngredientFailed({error: error}));
   }
