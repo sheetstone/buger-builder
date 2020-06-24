@@ -14,7 +14,6 @@ export function* purchaseBurgerSaga(action) {
       actions.purchaseBurgerSuccess({responsedata: response.data.name, orderData: action.orderData})
     );
   } catch (error) {
-    console.error(error);
     yield put(actions.purchaseBurgerFail(error));
   }
 }
