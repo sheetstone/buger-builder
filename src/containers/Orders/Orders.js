@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import Order from '../../components/Order/Order';
 import Spinner from '../../components/UI/Spinner/Spinner';
 
@@ -41,6 +41,7 @@ const mapStateToProps = state => ({
     uid: state.auth.userId,
 })
 
+const dispatch = useDispatch();
 const mapDispatchToProps = dispatch => {
     return {
         onFetchOrders: (token, userId) => dispatch( actionCreator.fetchOrders(token, userId)),
